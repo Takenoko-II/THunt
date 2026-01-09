@@ -1,0 +1,24 @@
+name: THunt
+version: '${project.version}'
+main: com.gmail.subnokoii78.thunt.THunt
+description: 'プラグイン "FredHunt" の1.21.11対応版・改良版'
+api-version: '1.21.11'
+authors:
+  - TakenokoII
+bootstrapper: com.gmail.subnokoii78.thunt.THuntPluginBootstrap
+  # dependencies:
+  # bootstrap:
+  # Let's say that RegistryPlugin registers some data that your plugin needs to use
+  # We don't need this during runtime, so it's not required in the server section.
+  # However, can be added to both if needed
+  # RegistryPlugin:
+  # load: BEFORE
+  # required: true
+  # join-classpath: true # Defaults to true
+  # server:
+  # Add a required "RequiredPlugin" dependency, which will load AFTER your plugin.
+  # RequiredPlugin:
+  # load: AFTER
+  # required: true
+  # This means that your plugin will not have access to their classpath
+# join-classpath: false
