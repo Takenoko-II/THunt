@@ -1,7 +1,7 @@
 package com.gmail.subnokoii78.thunt.commands;
 
 import com.gmail.subnokoii78.gpcore.commands.AbstractCommand;
-import com.gmail.subnokoii78.thunt.compass.HunterCompassManager;
+import com.gmail.subnokoii78.thunt.compass.TrackerCompass;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -59,7 +59,7 @@ public class TrackerCommand extends AbstractCommand {
             final ItemStack item = inventory.getItem(i);
             if (item == null) continue;
 
-            if (HunterCompassManager.isCompass(item)) {
+            if (TrackerCompass.isCompass(item)) {
                 inventory.setItem(i, null);
                 hasCompass = true;
             }
@@ -77,7 +77,7 @@ public class TrackerCommand extends AbstractCommand {
             ));
         }
         else {
-            inventory.addItem(HunterCompassManager.createCompass());
+            inventory.addItem(TrackerCompass.createCompass());
             stack.getSender().sendMessage(Component.text(
                 player.getName() + " にトラッカーコンパスを渡しました"
             ).color(NamedTextColor.GREEN));

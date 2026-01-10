@@ -1,3 +1,4 @@
 {
-    "join_to_give": true
+    "join_to_give_compass": true,
+    "track_last_used_portal": true
 }
