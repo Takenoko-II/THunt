@@ -14,21 +14,34 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.core.UUIDUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @NullMarked
 public class HunterCompassManager {
+    private static final Map<UUID, Location> portalPosMap = new HashMap<>();
+
+    static void setPortalPos(Player player, Location loc) {
+        portalPosMap.put(player.getUniqueId(), loc);
+    }
+
+    static void clearPortalPos(Player player) {
+        portalPosMap.remove(player.getUniqueId());
+    }
+
     private static final MojangsonPath TRACKER_ROOT = MojangsonPath.of("tracker");
 
-    private static final MojangsonPath TARGET = MojangsonPath.of("tracker.tracked_target");
+    private static final MojangsonPath TRACKED_ENTITY = MojangsonPath.of("tracker.tracked_entity");
+
+    private static final MojangsonPath TRACKED_DIMENSION = MojangsonPath.of("tracker.tracked_dimension");
 
     private final ItemStack itemStack;
 
@@ -57,7 +70,7 @@ public class HunterCompassManager {
                     ).color(NamedTextColor.GOLD))
                     .clickSound(ItemButtonClickSound.BASIC)
                     .onClick(event -> {
-                        setTrackedEntity(entity);
+                        track(entity);
                         event.close();
                     })
             );
@@ -73,25 +86,76 @@ public class HunterCompassManager {
     public @Nullable Player getTrackedEntity() {
         final MojangsonCompound nbt = ItemStackCustomDataAccess.of(itemStack).read();
 
-        if (!nbt.has(TARGET)) {
+        if (!nbt.has(TRACKED_ENTITY)) {
             return null;
         }
 
-        final int[] uuidArr = nbt.get(TARGET, MojangsonValueTypes.INT_ARRAY).toArray();
+        final int[] uuidArr = nbt.get(TRACKED_ENTITY, MojangsonValueTypes.INT_ARRAY).toArray();
         return Bukkit.getPlayer(UUIDUtil.uuidFromIntArray(uuidArr));
     }
 
-    private void setTrackedEntity(Entity entity) {
-        itemStack.setData(
-            DataComponentTypes.LODESTONE_TRACKER,
-            LodestoneTracker.lodestoneTracker()
-                .tracked(false)
-                .location(entity.getLocation())
-        );
+    public @Nullable World getTrackedDimension() {
+        final MojangsonCompound nbt = ItemStackCustomDataAccess.of(itemStack).read();
+
+        if (!nbt.has(TRACKED_DIMENSION)) {
+            return null;
+        }
+
+        final int[] uuidArr = nbt.get(TRACKED_DIMENSION, MojangsonValueTypes.INT_ARRAY).toArray();
+        return Bukkit.getWorld(UUIDUtil.uuidFromIntArray(uuidArr));
+    }
+
+    private void track(Entity entity) {
         final ItemStackCustomDataAccess access = ItemStackCustomDataAccess.of(itemStack);
-       final MojangsonCompound data = access.read();
-       data.set(TARGET, UUIDUtil.uuidToIntArray(entity.getUniqueId()));
-       access.write(data);
+        final Entity preEntity = getTrackedEntity();
+        final World preWorld = getTrackedDimension();
+
+        if (preEntity != null && preWorld != null) {
+            if (!preEntity.getUniqueId().equals(entity.getUniqueId())) {
+                final MojangsonCompound data = access.read();
+                data.set(TRACKED_ENTITY, UUIDUtil.uuidToIntArray(entity.getUniqueId()));
+                data.set(TRACKED_DIMENSION, UUIDUtil.uuidToIntArray(entity.getLocation().getWorld().getUID()));
+                access.write(data);
+
+                itemStack.setData(
+                    DataComponentTypes.LODESTONE_TRACKER,
+                    LodestoneTracker.lodestoneTracker()
+                        .tracked(false)
+                        .location(entity.getLocation())
+                );
+            }
+            else {
+                final Location trackedLoc;
+
+                if (preWorld.getUID().equals(entity.getWorld().getUID())) {
+                    trackedLoc = entity.getLocation();
+                }
+                else {
+                    final Location loc = portalPosMap.get(entity.getUniqueId());
+
+                    if (loc == null) {
+                        throw new IllegalStateException("ぬるぽ");
+                    }
+
+                    trackedLoc = Objects.requireNonNullElse(
+                        loc,
+                        entity.getLocation()
+                    );
+                }
+
+                final MojangsonCompound data = access.read();
+                data.set(TRACKED_ENTITY, UUIDUtil.uuidToIntArray(entity.getUniqueId()));
+                data.set(TRACKED_DIMENSION, UUIDUtil.uuidToIntArray(entity.getLocation().getWorld().getUID()));
+                access.write(data);
+
+                itemStack.setData(
+                    DataComponentTypes.LODESTONE_TRACKER,
+                    LodestoneTracker.lodestoneTracker()
+                        .tracked(false)
+                        .location(trackedLoc)
+                );
+            }
+        }
     }
 
     public boolean updateTracking() {

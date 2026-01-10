@@ -10,7 +10,7 @@ plugins {
 
 group = "com.gmail.subnokoii78"
 version = "1.0-SNAPSHOT"
-description = ""
+description = "thunt desuyo"
 
 repositories {
     mavenCentral()
@@ -23,7 +23,7 @@ java {
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     implementation(files(
-        "../GenericPluginCore/GenericPluginCore-1.0-SNAPSHOT.jar"
+        "../GenericPluginCore/build/libs/GenericPluginCore-1.0-SNAPSHOT.jar"
     ))
 }
 

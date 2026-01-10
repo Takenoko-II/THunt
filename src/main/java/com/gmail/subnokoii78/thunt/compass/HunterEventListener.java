@@ -9,14 +9,13 @@ import com.gmail.takenokoii78.json.JSONValueTypes;
 import com.gmail.takenokoii78.json.values.JSONObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
@@ -60,8 +59,15 @@ public class HunterEventListener implements Listener {
     }
 
     @EventHandler
-    public void on(PlayerTeleportEvent event) {
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        if (event.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
 
+        }
+        HunterCompassManager.setPortalPos(event.getPlayer(), event.getFrom());
+    }
+
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        HunterCompassManager.clearPortalPos(event.getPlayer());
     }
 
     @EventHandler
@@ -115,7 +121,7 @@ public class HunterEventListener implements Listener {
                     event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 5f, 2f);
                 }
                 else {
-                    event.getPlayer().sendMessage(Component.text("追跡対象が指定されていません！(左クリックで設定してください)").color(NamedTextColor.RED));
+                    event.getPlayer().sendMessage(Component.text("追跡対象が指定されていないか、既に存在しません; 左クリックで設定してください").color(NamedTextColor.RED));
                     event.getPlayer().playSound(event.getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 5f, 1f);
                 }
             }
