@@ -1,9 +1,12 @@
 package com.gmail.subnokoii78.thunt.compass;
 
+import com.gmail.subnokoii78.gpcore.GPCore;
+import com.gmail.subnokoii78.gpcore.events.EventTypes;
+import com.gmail.subnokoii78.gpcore.events.PlayerClickEvent;
+import com.gmail.subnokoii78.gpcore.ui.container.ContainerInteraction;
 import com.gmail.subnokoii78.thunt.THunt;
-import com.gmail.subnokoii78.thunt.container.ContainerInteraction;
-import com.gmail.subnokoii78.thunt.events.EventTypes;
-import com.gmail.subnokoii78.thunt.events.PlayerClickEvent;
+import com.gmail.takenokoii78.json.JSONValueTypes;
+import com.gmail.takenokoii78.json.values.JSONObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
@@ -11,6 +14,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NullMarked;
 
@@ -28,6 +35,33 @@ public class HunterEventListener implements Listener {
         if (HunterCompassManager.isCompass(event.getItemDrop().getItemStack())) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        final JSONObject config = GPCore.getPluginConfigLoader().get();
+
+        final boolean joinToGive = config.has(THunt.JOIN_TO_GIVE) ? config.get(THunt.JOIN_TO_GIVE, JSONValueTypes.BOOLEAN).getValue() : false;
+
+        if (joinToGive) {
+            final Inventory inventory = event.getPlayer().getInventory();
+
+            for (int i = 0; i < inventory.getSize(); i++) {
+                final ItemStack item = inventory.getItem(i);
+                if (item == null) continue;
+
+                if (HunterCompassManager.isCompass(item)) {
+                    return;
+                }
+            }
+
+            inventory.addItem(HunterCompassManager.createCompass());
+        }
+    }
+
+    @EventHandler
+    public void on(PlayerTeleportEvent event) {
+
     }
 
     @EventHandler

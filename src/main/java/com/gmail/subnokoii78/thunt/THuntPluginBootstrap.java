@@ -13,6 +13,6 @@ public class THuntPluginBootstrap implements PluginBootstrap {
 
     @Override
     public JavaPlugin createPlugin(PluginProviderContext context) {
-        return THunt.INSTANCE;
+        return new THunt(this);
     }
 }

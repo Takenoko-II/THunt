@@ -1,10 +1,10 @@
 package com.gmail.subnokoii78.thunt.compass;
 
-import com.gmail.subnokoii78.thunt.container.ContainerInteraction;
-import com.gmail.subnokoii78.thunt.container.ItemButton;
-import com.gmail.subnokoii78.thunt.container.ItemButtonClickSound;
-import com.gmail.subnokoii78.thunt.itemstack.ItemStackBuilder;
-import com.gmail.subnokoii78.thunt.itemstack.ItemStackCustomDataAccess;
+import com.gmail.subnokoii78.gpcore.itemstack.ItemStackBuilder;
+import com.gmail.subnokoii78.gpcore.itemstack.ItemStackCustomDataAccess;
+import com.gmail.subnokoii78.gpcore.ui.container.ContainerInteraction;
+import com.gmail.subnokoii78.gpcore.ui.container.ItemButton;
+import com.gmail.subnokoii78.gpcore.ui.container.ItemButtonClickSound;
 import com.gmail.takenokoii78.mojangson.MojangsonPath;
 import com.gmail.takenokoii78.mojangson.MojangsonValueTypes;
 import com.gmail.takenokoii78.mojangson.values.MojangsonCompound;

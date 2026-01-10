@@ -1,6 +1,6 @@
 package com.gmail.subnokoii78.thunt.commands;
 
-import com.gmail.subnokoii78.thunt.THunt;
+import com.gmail.subnokoii78.gpcore.commands.AbstractCommand;
 import com.gmail.subnokoii78.thunt.compass.HunterCompassManager;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -8,7 +8,6 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -24,13 +23,6 @@ public class TrackerCommand extends AbstractCommand {
     @Override
     protected LiteralCommandNode<CommandSourceStack> getCommandNode() {
         return Commands.literal("tracker")
-            .then(
-                Commands.literal("settings")
-                    .then(
-                        Commands.literal("join_to_give")
-                            .executes(this::toggleJoinToGive)
-                    )
-            )
             .executes(this::run)
             .build();
     }
@@ -91,17 +83,6 @@ public class TrackerCommand extends AbstractCommand {
             ).color(NamedTextColor.GREEN));
             return 1;
         }
-    }
-
-    private int toggleJoinToGive(CommandContext<CommandSourceStack> context) {
-        final FileConfiguration config = THunt.INSTANCE.getConfig();
-        final boolean changeTo = config.contains(THunt.JOIN_TO_GIVE)
-            ? !config.getBoolean(THunt.JOIN_TO_GIVE)
-            : true;
-
-        config.set(THunt.JOIN_TO_GIVE, changeTo);
-
-        return 1;
     }
 
     @Override

@@ -23,7 +23,7 @@ java {
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     implementation(files(
-        "../JSON/target/JSON-1.0-SNAPSHOT.jar"
+        "../GenericPluginCore/GenericPluginCore-1.0-SNAPSHOT.jar"
     ))
 }
 
