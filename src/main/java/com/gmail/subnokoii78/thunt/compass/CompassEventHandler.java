@@ -35,34 +35,20 @@ public class CompassEventHandler implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         if (!event.getKeepInventory()) {
-            final List<ItemStack> list1 = event.getItemsToKeep();
-            final List<ItemStack> list2 = event.getDrops();
-
+            final List<ItemStack> drops = event.getDrops();
+            final List<ItemStack> itemsToKeep = event.getItemsToKeep();
             final List<ItemStack> compasses = new ArrayList<>();
 
-            for (ItemStack itemStack : list1) {
+            for (final ItemStack itemStack : drops) {
                 if (TrackerCompass.isCompass(itemStack)) {
                     compasses.add(itemStack);
                 }
             }
 
             for (ItemStack compass : compasses) {
-                list1.remove(compass);
+                drops.remove(compass);
+                itemsToKeep.add(compass);
             }
-
-            compasses.clear();
-
-            for (ItemStack itemStack : list2) {
-                if (TrackerCompass.isCompass(itemStack)) {
-                    compasses.add(itemStack);
-                }
-            }
-
-            for (ItemStack compass : compasses) {
-                list2.remove(compass);
-            }
-
-            event.getPlayer().getInventory().addItem(TrackerCompass.createCompass());
         }
     }
 
