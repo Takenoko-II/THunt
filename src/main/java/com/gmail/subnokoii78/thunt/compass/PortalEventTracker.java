@@ -6,6 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityRemoveEvent;
 import org.bukkit.event.entity.EntityTeleportEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -32,8 +34,22 @@ public class PortalEventTracker implements Listener {
     }
 
     @EventHandler
+    public void onPlayerTeleport(PlayerTeleportEvent event) {
+        final Location from = event.getFrom();
+        final Location to = event.getTo();
+
+        if (!from.getWorld().equals(to.getWorld())) {
+            portals.put(event.getPlayer(), from);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        portals.remove(event.getPlayer());
+    }
+
+    @EventHandler
     public void onEntityRemove(EntityRemoveEvent event) {
-        // プレイヤー専用なら誤作動はなし
         portals.remove(event.getEntity());
     }
 
