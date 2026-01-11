@@ -105,9 +105,13 @@ public class TrackerCompass {
         final ItemStackCustomDataAccess access = ItemStackCustomDataAccess.of(itemStack);
 
         final MojangsonCompound data = access.read();
+        final Entity tracked = getTrackedEntity();
 
-        final TrackerUseResult successResult;
-        if (data.has(TRACKED_ENTITY)) {
+        TrackerUseResult successResult;
+        if (tracked == null) {
+            successResult = TrackerUseResult.TARGET_SET;
+        }
+        else if (tracked.equals(entity)) {
             successResult = TrackerUseResult.INFORMATION_UPDATED;
         }
         else {
@@ -132,6 +136,8 @@ public class TrackerCompass {
                 if (location == null) {
                     return TrackerUseResult.PORTAL_NOT_FOUND;
                 }
+
+                successResult = TrackerUseResult.INFORMATION_UPDATED_PORTAL;
             }
             else {
                 return TrackerUseResult.ANOTHER_DIMENSION;
@@ -219,6 +225,8 @@ public class TrackerCompass {
         TARGET_UNSET(false, "追跡対象が設定されていません"),
 
         INFORMATION_UPDATED(true, "追跡対象の位置情報が更新されました"),
+
+        INFORMATION_UPDATED_PORTAL(true, "追跡対象のポータルの位置情報が更新されました"),
 
         ALREADY_UNLOADED(false, "追跡対象は既にアンロードされています"),
 

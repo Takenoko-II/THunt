@@ -2,7 +2,6 @@ package com.gmail.subnokoii78.thunt;
 
 import com.gmail.subnokoii78.gpcore.GPCore;
 import com.gmail.subnokoii78.gpcore.events.EventTypes;
-import com.gmail.subnokoii78.gpcore.files.PluginConfigLoader;
 import com.gmail.subnokoii78.thunt.commands.ConfigCommand;
 import com.gmail.subnokoii78.thunt.commands.TrackerCommand;
 import com.gmail.subnokoii78.thunt.compass.CompassEventHandler;
