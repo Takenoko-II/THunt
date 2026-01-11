@@ -1,6 +1,7 @@
 package com.gmail.subnokoii78.thunt;
 
 import com.gmail.subnokoii78.gpcore.GPCore;
+import com.gmail.subnokoii78.gpcore.events.EventTypes;
 import com.gmail.subnokoii78.thunt.commands.ConfigCommand;
 import com.gmail.subnokoii78.thunt.commands.TrackerCommand;
 import com.gmail.subnokoii78.thunt.compass.CompassEventHandler;
@@ -9,19 +10,21 @@ import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public final class THunt extends JavaPlugin {
-    private final THuntPluginBootstrap bootstrap;
-
-    THunt(THuntPluginBootstrap bootstrap) {
-        this.bootstrap = bootstrap;
-    }
-
     @Override
     public void onEnable() {
-        GPCore.initialize(this, bootstrap, getConfigFilePath(), DEFAULT_CONFIG_RESOURCE_PATH);
+        GPCore.initialize(this, null, getConfigFilePath(), DEFAULT_CONFIG_RESOURCE_PATH);
+
+        GPCore.events.register(EventTypes.PLUGIN_CONFIG_UPDATE, event -> {
+            Bukkit.getOnlinePlayers().forEach(Player::updateCommands);
+        });
 
         final PluginManager pluginManager = getServer().getPluginManager();
 
@@ -45,6 +48,8 @@ public final class THunt extends JavaPlugin {
     public static final String CONFIG_TRACK_LAST_USED_PORTAL = "track_last_used_portal";
 
     public static final String CONFIG_JOIN_TO_GIVE_COMPASS = "join_to_give_compass";
+
+    public static final String CONFIG_REQUIRE_OP_TO_USE_TRACKER = "require_op_to_use_tracker";
 
     public String getConfigFilePath() {
         return getDataPath() + "/config.json";

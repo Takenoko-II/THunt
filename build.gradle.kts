@@ -1,16 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import xyz.jpenilla.resourcefactory.paper.paperPluginYaml
 
 plugins {
     `java-library`
     id("io.papermc.paperweight.userdev").version("2.0.0-beta.19")
-    // id("xyz.jpenilla.run-paper") version("3.0.0-beta.1")
-    // id("xyz.jpenilla.resource-factory-bukkit-convention").version("1.3.0")
+    id("xyz.jpenilla.resource-factory-bukkit-convention").version("1.3.0")
+    // id("xyz.jpenilla.run-paper") version("3.0.0-beta.2")
     id("com.gradleup.shadow").version("9.1.0")
 }
 
 group = "com.gmail.subnokoii78"
 version = "1.0-SNAPSHOT"
-description = "thunt desuyo"
+description = "プラグイン FredHunt をもとにした1.21.11対応トラッカーコンパスプラグイン"
 
 repositories {
     mavenCentral()
@@ -22,7 +23,9 @@ java {
 
 dependencies {
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+
     implementation(files(
+        // configファイルとかクリックイベントとかコンテナUIとかを含む汎用ライブラリ
         "../GenericPluginCore/build/libs/GenericPluginCore-1.0-SNAPSHOT.jar"
     ))
 }
@@ -31,6 +34,7 @@ tasks {
     compileJava {
         options.release = 21
     }
+
     javadoc {
         options.encoding = Charsets.UTF_8.name()
     }
@@ -43,7 +47,6 @@ tasks {
         mergeServiceFiles()
     }
 
-    // jar fileの生成位置をコンソールに出力する(これはなくてもok)
     withType<Jar>().configureEach {
         doLast {
             println("Jar file was generated at: ${archiveFile.get().asFile.absolutePath}")
@@ -51,14 +54,26 @@ tasks {
     }
 
     withType<JavaCompile> {
-        // ソースコードの文字列エンコード形式をUTF-8にする(これやらないとコンパイル時に日本語が文字化けする)
         options.encoding = Charsets.UTF_8.name()
-
-        // 各種警告を無視(これがないと永遠にビルドできない)
         options.compilerArgs.addAll(listOf("-Xlint:all", "-Xlint:-unchecked"))
     }
+}
 
-    withType<JavaCompile>().configureEach {
-        options.encoding = "UTF-8"
-    }
+bukkitPluginYaml {
+    name = project.name
+    description = project.description
+    version = "${project.version}"
+    apiVersion = "1.21.11"
+    authors.add("Takenoko-II")
+    main = "com.gmail.subnokoii78.thunt.THunt"
+}
+
+paperPluginYaml {
+    name = project.name
+    description = project.description
+    version = "${project.version}"
+    apiVersion = "1.21.11"
+    authors.add("Takenoko-II")
+    main = "com.gmail.subnokoii78.thunt.THunt"
+    // bootstrapper = "com.gmail.subnokoii78.thunt.THuntPluginBootstrap"
 }

@@ -1,7 +1,11 @@
 package com.gmail.subnokoii78.thunt.commands;
 
+import com.gmail.subnokoii78.gpcore.GPCore;
 import com.gmail.subnokoii78.gpcore.commands.AbstractCommand;
+import com.gmail.subnokoii78.thunt.THunt;
 import com.gmail.subnokoii78.thunt.compass.TrackerCompass;
+import com.gmail.takenokoii78.json.JSONValueTypes;
+import com.gmail.takenokoii78.json.values.JSONObject;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
@@ -23,6 +27,17 @@ public class TrackerCommand extends AbstractCommand {
     @Override
     protected LiteralCommandNode<CommandSourceStack> getCommandNode() {
         return Commands.literal("tracker")
+            .requires(stack -> {
+                final JSONObject config = GPCore.getPluginConfigLoader().get();
+                final boolean requireOpToUseTracker = config.get(THunt.CONFIG_REQUIRE_OP_TO_USE_TRACKER, JSONValueTypes.BOOLEAN).getValue();
+
+                if (requireOpToUseTracker) {
+                    return stack.getSender().isOp();
+                }
+                else {
+                    return true;
+                }
+            })
             .executes(this::run)
             .build();
     }

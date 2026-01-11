@@ -1,4 +1,5 @@
 {
     "join_to_give_compass": true,
-    "track_last_used_portal": true
+    "track_last_used_portal": true,
+    "require_op_to_use_tracker": false
 }
